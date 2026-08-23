@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S-Visual Math Editor Main Page</title>
+    <script src="https://www.wiris.net/demo/editor/editor"></script>
+    <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
+  </head>
+  <body>
+    <p>Enter Expression</p>
+    <div id="editor" style="width: 600px; height: 300px;"></div>
+    <button onclick="updateMath()">Render Equation</button>
+    <p>Rendering Result</p>
+    <div id="renderingResult"></div>
+    <script>
+      const editorElement = document.getElementById("editor");
+      const renderingResult = document.getElementById("renderingResult");
+      const editor = com.wiris.jsEditor.JsEditor.newInstance({
+        toolbar: `<toolbar ref="general"><tab ref="advanced" before="contextual"/></toolbar>`
+      });
+      editor.insertInto(editorElement);
+      function updateMath() {
+        try {
+          renderingResult.innerHTML = editor.getMathML();
+          com.wiris.js.JsPluginViewer.parseElement(renderingResult);
+        } catch (error) {}
+      }
+    </script>
+    <a></a>
+  </body>
+</html>
