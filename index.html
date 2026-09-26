@@ -2,32 +2,272 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S-Visual Math Editor Main Page</title>
-    <script src="https://www.wiris.net/demo/editor/editor"></script>
-    <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
+    <title>Student Flavored Visual Math Editor Main Page</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathlive"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathlive"></script>
+    <style>
+      body {
+        min-width: 900px;
+        font-family: 'Inter', 'Pretendard', 'Arial', 'Helvetica', sans-serif;
+        background-color: #73adff;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      math-field {
+        outline: none;
+        width: 100%;
+        background-color: #d5e3ff;
+        color: #0077dc;
+        box-shadow: 10px 10px 30px #73adff;
+        border-radius: 10px;
+        border: 2px solid #73adff;
+        transition: border-color 0.25s;
+      }
+      math-field:focus {
+        border-color: #0077dc;
+      }
+      .card {
+        min-width: 700px;
+        max-width: 700px;
+        padding: 25px;
+        margin: 20px;
+        border-radius: 10px;
+        background-color: #bed6ff;
+        box-shadow: 5px 10px 30px #0077dc;
+      }
+      .vertical {
+        display: flex;
+        flex-direction: column;
+      }
+      .center {
+        align-items: center;
+      }
+      .title {
+        color: #004787;
+        font-weight: 600;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .description {
+        color: #2c91ff;
+        font-weight: 200;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .label {
+        color: #2c91ff;
+        font-weight: 500;
+        padding: 5px 0;
+      }
+      .details-panel, .button {
+        border: none;
+        background-color: #0077dc;
+        padding: 15px;
+        margin: 10px 0;
+        color: #d5e3ff;
+        border-radius: 15px;
+        font-weight: 500;
+        box-shadow: 5px 10px 30px #2c91ff;
+        transition: transform 0.25s, background-color 0.25s;
+      }
+      .details-panel:hover, .button:hover {
+        cursor: pointer;
+        transform: translateY(1px);
+        background-color: #005fb1;
+      }
+      .button {
+        margin: 10px;
+      }
+    </style>
   </head>
   <body>
-    <p>Enter Expression</p>
-    <div id="editor" style="width: 600px; height: 300px;"></div>
-    <button onclick="updateMath()">Render Equation</button>
-    <p>Rendering Result</p>
-    <div id="renderingResult"></div>
+    <div class="card vertical center">
+      <h1 class="title">Student Flavored VME</h1>
+      <p class="description">Create mathematical equations with the editor.</p>
+    </div>
+    <div class="card vertical">
+      <label class="label" for="studentFlavoredMathField">Enter Math Equation</label>
+      <math-field id="studentFlavoredMathField" placeholder="\text{Enter math equation here...}"></math-field>
+    </div>
+    <div class="card vertical">
+      <label class="label">Math Toolbox</label>
+      <details class="details-panel">
+        <summary>Structures</summary>
+        <div id="structuresPanel"></div>
+      </details>
+      <details class="details-panel">
+        <summary>Symbols</summary>
+        <div id="symbolsPanel"></div>
+      </details>
+    </div>
     <script>
-      const editorElement = document.getElementById("editor");
-      const renderingResult = document.getElementById("renderingResult");
-      const editor = com.wiris.jsEditor.JsEditor.newInstance({
-        toolbar: `<toolbar ref="general"><tab ref="advanced" before="contextual"/></toolbar>`
+      window.addEventListener('DOMContentLoaded', function() {
+        const mf = document.getElementById("studentFlavoredMathField");
+        const structuresPanel = document.getElementById("structuresPanel");
+        const symbolsPanel = document.getElementById("symbolsPanel");
+
+        const structures = [
+          ['\\frac{', '}{', '}'],
+          ['', '^{', '}'],
+          ['', '_{', '}'],
+          ['', '_{', '}^{', '}'],
+          ['\\sqrt{', '}'],
+          ['\\sqrt[', ']{', '}'],
+          ['\\left(', '\\right)'],
+          ['\\left\\{', '\\right\\}'],
+          ['\\left[', '\\right]'],
+          ['\\sum_{', '}^{', '}'],
+          ['\\int_{', '}^{', '}'],
+        ];
+        const symbols = [
+          {
+            name: 'Arithmetic',
+            contents: [
+              ['\\times'],
+              ['\\div'],
+              ['\\pm'],
+              ['\\mp'],
+            ]
+          },
+          {
+            name: 'Relations',
+            contents: [
+              ['\\approx'],
+              ['\\leq'],
+              ['\\geq'],
+              ['\\neq'],
+              ['\\because'],
+              ['\\therefore'],
+            ]
+          },
+          {
+            name: 'Greek',
+            contents: [
+              ['\\alpha'],
+              ['\\beta'],
+              ['\\gamma'],
+              ['\\delta'],
+              ['\\epsilon'],
+              ['\\zeta'],
+              ['\\eta'],
+              ['\\theta'],
+              ['\\iota'],
+              ['\\kappa'],
+              ['\\lambda'],
+              ['\\mu'],
+              ['\\nu'],
+              ['\\xi'],
+              ['\\pi'],
+              ['\\rho'],
+              ['\\sigma'],
+              ['\\tau'],
+              ['\\upsilon'],
+              ['\\phi'],
+              ['\\chi'],
+              ['\\psi'],
+              ['\\omega'],
+              ['\\Gamma'],
+              ['\\Delta'],
+              ['\\Theta'],
+              ['\\Lambda'],
+              ['\\Xi'],
+              ['\\Pi'],
+              ['\\Sigma'],
+              ['\\Chi'],
+              ['\\Omega'],
+            ]
+          },
+          {
+            name: 'Arrows',
+            contents: [
+              ['\\rightarrow'],
+              ['\\Rightarrow'],
+              ['\\Leftrightarrow'],
+            ]
+          },
+          {
+            name: 'Functions',
+            contents: [
+              ['\\ln', ''],
+              ['\\log', ''],
+              ['\\log_{', '}', ''],
+              ['\\sin', ''],
+              ['\\cos', ''],
+              ['\\tan', ''],
+            ]
+          },
+          {
+            name: 'Higher Functions',
+            contents: [
+              ['\\sec', ''],
+              ['\\csc', ''],
+              ['\\cot', ''],
+              ['\\arcsin', ''],
+              ['\\arccos', ''],
+              ['\\arctan', ''],
+              ['\\sinh', ''],
+              ['\\cosh', ''],
+              ['\\tanh', ''],
+              ['\\coth', '']
+            ]
+          },
+          {
+            name: 'Large Operators',
+            contents: [
+              ['\\sum'],
+              ['\\int']
+            ]
+          },
+          {
+            name: 'Misc',
+            contents: [
+              ['\\infty']
+            ]
+          }
+        ]
+        const placeholders = 'xyztpqabc';
+        
+        structures.forEach((item) => {
+          const visualString = item.join('\\boxed{?}');
+          const inputString = item.reduce((acc, val, index) => acc + ' ' + placeholders[index - 1] + val);
+          const button = document.createElement('button');
+          button.classList.add('button');
+          const mathSpan = document.createElement('math-span');
+          mathSpan.innerText = `\\color{white}${visualString}`;
+          button.append(mathSpan);
+          button.onclick = () => {
+            mf.insert(inputString);
+            mf.focus();
+          };
+          structuresPanel.append(button);
+        });
+
+        symbols.forEach((item) => {
+          const detailsPanel = document.createElement('details');
+          detailsPanel.classList.add('details-panel');
+          const summaryElement = document.createElement('summary');
+          summaryElement.innerText = item.name;
+          detailsPanel.append(summaryElement);
+          item.contents.forEach((symbol) => {
+            const visualString = symbol.join('\\boxed{?}');
+            const inputString = symbol.reduce((acc, val, index) => acc + ' ' + placeholders[index - 1] + val);
+            const button = document.createElement('button');
+            button.classList.add('button');
+            const mathSpan = document.createElement('math-span');
+            mathSpan.innerText = `\\color{white}${visualString}`;
+            button.append(mathSpan);
+            button.onclick = () => {
+              mf.insert(inputString);
+              mf.focus();
+            };
+            detailsPanel.append(button);
+          });
+          symbolsPanel.append(detailsPanel);
+        });
       });
-      editor.insertInto(editorElement);
-      function updateMath() {
-        try {
-          renderingResult.innerHTML = editor.getMathML();
-          com.wiris.js.JsPluginViewer.parseElement(renderingResult);
-        } catch (error) {}
-      }
     </script>
-    <a></a>
   </body>
 </html>
